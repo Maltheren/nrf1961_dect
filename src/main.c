@@ -305,7 +305,7 @@ static int receive(uint32_t handle)
 		.mode = NRF_MODEM_DECT_PHY_RX_MODE_CONTINUOUS,
 		.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_OFF,
 		.link_id = NRF_MODEM_DECT_PHY_LINK_UNSPECIFIED,
-		.rssi_level = -60,
+		.rssi_level = -100,
 		.carrier = CONFIG_CARRIER,
 		.duration = CONFIG_RX_PERIOD_S * MSEC_PER_SEC *
 			    NRF_MODEM_DECT_MODEM_TIME_TICK_RATE_KHZ,
@@ -339,7 +339,7 @@ int main(void)
 		LOG_ERR("modem init failed, err %d", err);
 		return err;
 	}
-
+	LOG_INF("tksssssssssssaigjneuihgiazjfe");
 	err = nrf_modem_dect_phy_event_handler_set(dect_phy_event_handler);
 	if (err) {
 		LOG_ERR("nrf_modem_dect_phy_event_handler_set failed, err %d", err);
@@ -387,6 +387,7 @@ int main(void)
 	if (err) {
 		LOG_ERR("nrf_modem_dect_phy_capability_get failed, err %d", err);
 	}
+	LOG_INF("pis");
 
 	while (1) {
 		/** Transmitting message */
@@ -404,7 +405,7 @@ int main(void)
 		/* Wait for TX operation to complete. */
 		k_sem_take(&operation_sem, K_FOREVER);
 
-		if ((tx_counter_value >= CONFIG_TX_TRANSMISSIONS) && CONFIG_TX_TRANSMISSIONS) {
+		if ((tx_counter_value >= 3600) && CONFIG_TX_TRANSMISSIONS) {
 			LOG_INF("Reached maximum number of transmissions (%d)",
 				CONFIG_TX_TRANSMISSIONS);
 			break;
