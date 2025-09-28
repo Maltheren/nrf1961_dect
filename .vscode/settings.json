@@ -1,3 +1,12 @@
 {
-  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/hello_dect_1/compile_commands.json",
+  "terminal.integrated.defaultProfile.linux": "Zephyr IDE Terminal",
+  "cmake.configureOnOpen": false,
+  "files.associations": {
+    "*.embeddedhtml": "html",
+    "cstdint": "cpp",
+    "log.h": "c",
+    "decthandler.h": "c",
+    "nrf_modem_lib.h": "c"
+  }
 }
