@@ -7,6 +7,17 @@
     "cstdint": "cpp",
     "log.h": "c",
     "decthandler.h": "c",
-    "nrf_modem_lib.h": "c"
+    "nrf_modem_lib.h": "c",
+    "unordered_map": "cpp",
+    "istream": "cpp",
+    "numeric": "cpp",
+    "ostream": "cpp",
+    "sstream": "cpp",
+    "thread": "cpp",
+    "format": "cpp",
+    "array": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "span": "cpp"
   }
 }

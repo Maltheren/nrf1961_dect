@@ -3,6 +3,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
+#include <decthandler.h>
+
 
 LOG_MODULE_REGISTER(application);
 
@@ -16,9 +18,16 @@ int task_blinker(void)
 {
     gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 
-    while (1) {
-        gpio_pin_toggle_dt(&led);
+    while(!DECT.is_ready()){
         k_msleep(100);
+    }
+    nrf_modem_dect_phy_pdc_event TEMP;
+    while (1) {
+        k_msgq_get(DECT.get_rx_avalible(), &TEMP, K_FOREVER);
+
+
+        gpio_pin_toggle_dt(&led);
+        k_msleep(500);
     }
 }
 

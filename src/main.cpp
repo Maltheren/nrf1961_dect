@@ -21,24 +21,11 @@ BUILD_ASSERT(CONFIG_CARRIER, "Carrier must be configured according to local regu
 static uint16_t device_id;
 
 
-/* Header type 1, due to endianness the order is different than in the specification. */
-struct phy_ctrl_field_common {
-	uint32_t packet_length : 4;
-	uint32_t packet_length_type : 1;
-	uint32_t header_format : 3;
-	uint32_t short_network_id : 8;
-	uint32_t transmitter_id_hi : 8;
-	uint32_t transmitter_id_lo : 8;
-	uint32_t df_mcs : 3;
-	uint32_t reserved : 1;
-	uint32_t transmit_power : 4;
-	uint32_t pad : 24;
-};
 
 
 
 
-/* Dect PHY config parameters. */
+/* Dect PHY config parameters. */ 
 static struct nrf_modem_dect_phy_config_params dect_phy_config_params = {
 	.band_group_index = ((CONFIG_CARRIER >= 525 && CONFIG_CARRIER <= 551)) ? 1 : 0,
 	.harq_rx_process_count = 4,
@@ -108,7 +95,7 @@ struct nrf_modem_dect_phy_rx_params rx_op_params{};
 	if (err != 0) {
 		return err;
 	}
-
+	
 	return 0;
 }
 
@@ -123,83 +110,42 @@ int main(void)
 
 	LOG_INF("Dect NR+ PHY Hello sample started");
 
-	err = nrf_modem_lib_init();
-	if (err) {
-		LOG_ERR("modem init failed, err %d", err);
-		return err;
-	}
+
 	LOG_INF("tksssssssssssaigjneuihgiazjfe");
-	err = DECT.init();
-	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_event_handler_set failed, err %d", err);
-		return err;
-	}
-	
-	err = nrf_modem_dect_phy_init();
-	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_init failed, err %d", err);
-		return err;
-	}
 
-	k_sem_take(&operation_sem, K_FOREVER);
-	if (exit) {
-		return -EIO;
-	}
 
-	err = nrf_modem_dect_phy_configure(&dect_phy_config_params);
-	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_configure failed, err %d", err);
-		return err;
-	}
-
-	k_sem_take(&operation_sem, K_FOREVER);
-	if (exit) {
-		return -EIO;
-	}
-
-	err = nrf_modem_dect_phy_activate(NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY);
-	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_activate failed, err %d", err);
-		return err;
-	}
-
-	k_sem_take(&operation_sem, K_FOREVER);
-	if (exit) {
-		return -EIO;
-	}
-
-	hwinfo_get_device_id((uint8_t *)&device_id, sizeof(device_id));
-
+	device_id = DECT.get_id();
+	err = DECT.init(device_id);
 	LOG_INF("Dect NR+ PHY initialized, device ID: %d", device_id);
 
-	err = nrf_modem_dect_phy_capability_get();
-	if (err) {
-		LOG_ERR("nrf_modem_dect_phy_capability_get failed, err %d", err);
+	if(err){
+		LOG_ERR("panic inital error");
 	}
-	LOG_INF("pis");
 
 	while (1) {
+		
 		/** Transmitting message */
 		LOG_INF("Transmitting %d", tx_counter_value);
 		tx_len = sprintf((char*)tx_buf, "Hello DECT! %d", tx_counter_value) + 1; /* Include \0 */
-
-		err = transmit(tx_handle, tx_buf, tx_len);
+		err = DECT.transmit(tx_buf, tx_len);
+		//err = transmit(tx_handle, tx_buf, tx_len);
 		if (err) {
 			LOG_ERR("Transmisstion failed, err %d", err);
 			return err;
 		}
 
+		
 		tx_counter_value++;
 
 		/* Wait for TX operation to complete. */
-		k_sem_take(&operation_sem, K_FOREVER);
+		//k_sem_take(&DECT.operation_sem, K_FOREVER);
 
 		if ((tx_counter_value >= 3600) && CONFIG_TX_TRANSMISSIONS) {
 			LOG_INF("Reached maximum number of transmissions (%d)",
 				CONFIG_TX_TRANSMISSIONS);
 			break;
 		}
-
+		
 		/** Receiving messages for CONFIG_RX_PERIOD_S seconds. */
 		err = receive(rx_handle);
 		if (err) {
@@ -208,7 +154,7 @@ int main(void)
 		}
 
 		/* Wait for RX operation to complete. */
-		k_sem_take(&operation_sem, K_FOREVER);
+		k_sem_take(&DECT.operation_sem, K_FOREVER);
 	}
 
 	LOG_INF("Shutting down");
@@ -219,7 +165,7 @@ int main(void)
 		return err;
 	}
 
-	k_sem_take(&deinit_sem, K_FOREVER);
+	//k_sem_take(&DECT.deinit_sem, K_FOREVER);
 
 	err = nrf_modem_dect_phy_deinit();
 	if (err) {
@@ -227,7 +173,7 @@ int main(void)
 		return err;
 	}
 
-	k_sem_take(&deinit_sem, K_FOREVER);
+	k_sem_take(&DECT.deinit_sem, K_FOREVER);
 
 	err = nrf_modem_lib_shutdown();
 	if (err) {
