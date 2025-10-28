@@ -125,6 +125,7 @@ void DECTached::on_pcc(const struct nrf_modem_dect_phy_pcc_event *evt)
 {
 	LOG_INF("Received header from device ID %d",
 		evt->hdr.hdr_type_1.transmitter_id_hi << 8 | evt->hdr.hdr_type_1.transmitter_id_lo);
+	
 }
 
 /* Physical Control Channel CRC error notification. */
@@ -139,6 +140,7 @@ void DECTached::on_pdc(const struct nrf_modem_dect_phy_pdc_event *evt) //THIS is
 	/* Received RSSI value is in fixed precision format Q14.1 */
 	LOG_INF("Received data (RSSI: %d.%d): %s",
 		(evt->rssi_2 / 2), (evt->rssi_2 & 0b1) * 5, (char *)evt->data);
+	
 
 	if (rx_handle_function == nullptr){
 		int err = k_msgq_put(&rx_msq, &evt, K_NO_WAIT);

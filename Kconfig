@@ -41,7 +41,7 @@ config TX_TRANSMISSIONS
 
 config RX_PERIOD_S
 	int "RX period"
-	default 5
+	default 1
 	help
 	   Receive window period.
 	   Time is given in seconds.

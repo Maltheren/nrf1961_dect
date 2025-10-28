@@ -164,9 +164,13 @@ int DECTached::transmit(uint8_t* data, size_t data_len){
 }
 
 
+void DECTached::set_filter(uint16_t ID){
+	this->active_filter = ID;
+}
+
 
 /* Receive operation. */
-static int receive(uint32_t handle)
+int DECTached::receive(uint32_t handle, uint32_t time)
 {
 	int err;
 
@@ -180,16 +184,16 @@ struct nrf_modem_dect_phy_rx_params rx_op_params{};
 	rx_op_params.link_id = NRF_MODEM_DECT_PHY_LINK_UNSPECIFIED;
 	rx_op_params.rssi_level = -100;
 	rx_op_params.carrier = CONFIG_CARRIER;
-	rx_op_params.duration = CONFIG_RX_PERIOD_S * MSEC_PER_SEC *
+	rx_op_params.duration = time *
 							NRF_MODEM_DECT_MODEM_TIME_TICK_RATE_KHZ;
 	rx_op_params.filter.short_network_id = CONFIG_NETWORK_ID & 0xff;
 	rx_op_params.filter.is_short_network_id_used = 1;
-	rx_op_params.filter.receiver_identity = 0;
+	rx_op_params.filter.receiver_identity = active_filter;
 
 	err = nrf_modem_dect_phy_rx(&rx_op_params);
 	if (err != 0) {
 		return err;
 	}
-	
+	k_sem_take(&operation_sem, K_FOREVER);
 	return 0;
 }

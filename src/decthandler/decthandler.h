@@ -50,6 +50,18 @@ public:
     /// @return 
     int transmit(uint8_t* data, size_t data_len);
 
+    /// @brief Listens for the specified time duration, non blocking. The result will be given in the rx_msg struckt see 'get_rx_avalible()'
+    /// @param handle A handle for the operation, i just passed 1 for the most part
+    /// @param time The time duration in ms, where it listions
+    /// @return 0 on sucessfull request
+    int receive(uint32_t handle, uint32_t time);
+
+
+    /// @brief Sets a filter address only listening for the specified filter
+    /// @param ID The id to listen for 0=everyone
+    void set_filter(uint16_t ID);
+
+
     /// @brief Returns true if the system is set up
     /// @return True if the message queue and driver is ready.
     bool is_ready() {return this->ready;}
@@ -83,7 +95,8 @@ private:
     //Value to hold if the interface is ready for use
     bool ready = false;
 
-
+    //The current address to filter by, 0 = get everyone.
+    uint16_t active_filter = 0;
 
     //The queue for incoming messages
     struct k_msgq rx_msq;
