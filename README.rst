@@ -1,4 +1,41 @@
-.. _nrf_modem_dect_phy_hello:
+.. Wrapped up code for the
+
+
+simplified usage, use the example main.cpp for more correct usage
+```cpp
+int main(void)
+{
+	uint32_t tx_handle = 0;
+	uint32_t rx_handle = 1;
+   device_id = DECT.get_id();
+	err = DECT.init(device_id);
+	while (1) {
+		
+		/** Transmitting message */
+		LOG_INF("Transmitting %d", tx_counter_value);
+		tx_len = sprintf((char*)tx_buf, "Hello DECT! %d", tx_counter_value) + 1; /* Include \0 */
+		err = DECT.transmit(tx_buf, tx_len);
+		if (err) {
+			LOG_ERR("Transmisstion failed, err %d", err);
+			return err;
+		}
+
+      err = DECT.receive(rx_handle, 1000);
+		if (err) {
+			LOG_ERR("Reception failed, err %d", err);
+			return err;
+		}
+   }
+}
+
+
+```
+
+
+
+
+
+.. _nrf_modem_dect_phy_hello original code for the:
 
 nRF91x1: DECT NR+ PHY hello
 ###########################
