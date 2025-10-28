@@ -42,7 +42,7 @@ Simplified usage, using `main.cpp` for reference:
 
 .. _nrf_modem_dect_phy_hello original code for the:
 
-nRF91x1: DECT NR+ PHY hello
+nRF91x1: DECT NR+ PHY hello, SETUP FROM THE ORIGINAL EXAMPLE BY NRF
 ###########################
 
 .. contents::
