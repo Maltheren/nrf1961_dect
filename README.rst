@@ -5,6 +5,10 @@ Simplified usage, using `main.cpp` for reference:
 
 .. code-block:: cpp
    :linenos:
+   
+   #include <string.h>
+   #include <zephyr/kernel.h>
+   #include <decthandler.h>
 
    int main(void)
    {
